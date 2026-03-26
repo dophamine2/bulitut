@@ -444,6 +444,41 @@
   </script>
   <script src="script.js"></script>
   <script>
+    if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      document.querySelectorAll('a[href*="vk.com"]').forEach(a => {
+        a.addEventListener('click', function(e) {
+          e.preventDefault();
+          const fallback = this.href;
+          const deep = 'vkontakte://vk.com/im/channels/-231061182';
+          const t = setTimeout(() => { window.location.href = fallback; }, 1000);
+          window.location.href = deep;
+          window.addEventListener('blur', () => clearTimeout(t), { once: true });
+        });
+      });
+      document.querySelectorAll('a[href*="t.me"]').forEach(a => {
+        a.addEventListener('click', function(e) {
+          e.preventDefault();
+          const fallback = this.href;
+          const deep = 'tg://resolve?domain=bili_tut_minusinsk';
+          const t = setTimeout(() => { window.location.href = fallback; }, 1000);
+          window.location.href = deep;
+          window.addEventListener('blur', () => clearTimeout(t), { once: true });
+        });
+      });
+      document.querySelectorAll('a[href*="2gis.ru"]').forEach(a => {
+        a.addEventListener('click', function(e) {
+          e.preventDefault();
+          const fallback = this.href;
+          const url = new URL(fallback);
+          const deep = 'dgis://2gis.ru' + url.pathname + url.search;
+          const t = setTimeout(() => { window.open(fallback, '_blank'); }, 1000);
+          window.location.href = deep;
+          window.addEventListener('blur', () => clearTimeout(t), { once: true });
+        });
+      });
+    }
+  </script>
+  <script>
     function openLightbox(src) {
       document.getElementById('lightbox-img').src = src;
       document.getElementById('lightbox').classList.add('active');

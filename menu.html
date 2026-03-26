@@ -72,7 +72,7 @@
       <a href="index.html" class="menu-navbar__logo">
         <img src="images/logo.svg" alt="Логотип" />
       </a>
-      <span class="menu-navbar__brand-name">БЫЛИ ТУТ</span>
+      <a href="index.html" class="menu-navbar__brand-name">БЫЛИ ТУТ</a>
     </div>
     <button class="menu-navbar__burger" id="burgerBtn" aria-label="Меню">
       <span></span><span></span><span></span>
@@ -357,6 +357,7 @@
           {
             name: 'Кофе',
             desc: '',
+            sizeLabel: '',
             img: 'https://scdn.chibbis.ru/live/products/ac8c5173bd63e856b50b17282699414a.jpeg',
             sizes: [
               { label: 'Американо', weight: '200 мл', price: 120 },
@@ -373,14 +374,14 @@
         dishes: [
           {
             name: 'Пивная тарелка MAX',
-            desc: '',
+            desc: 'Кольца кальмара, Гренки чесночные, Креветки темпура, Сырные палочки, Картофель фри, Соус чесночный, Соус Тар-Тар, Соус цезарь',
             img: 'https://scdn.chibbis.ru/live/products/c20d83097f65f2dd616b6ea8f8ed5d47.jpeg',
             sizes: [{ label: 'MAX', weight: '600 г', price: 990 }],
             extras: [{ name: 'Сырный соус', price: 40 }, { name: 'Кетчуп', price: 40 }, { name: 'Чесночный соус', price: 40 }],
           },
           {
             name: 'Пивная закуска MINI',
-            desc: '',
+            desc: 'Наггетсы, Картофель фри, Гренки, Крылышки баффало, Соус чесночный, Кетчуп',
             img: 'https://scdn.chibbis.ru/live/products/37fa87ee2873e5a54a41d6e1a6a1f6a6.jpeg',
             sizes: [{ label: 'MINI', weight: '500 г', price: 690 }],
             extras: [{ name: 'Сырный соус', price: 40 }, { name: 'Кетчуп', price: 40 }, { name: 'Чесночный соус', price: 40 }],
@@ -440,8 +441,16 @@
       const sizeSection = document.getElementById('modalSizeSection');
       const hiddenLabels = ['Стандарт', 'Порция', 'Набор', 'MAX', 'MINI'];
       const showSizes = currentDish.sizes.length > 1 || !hiddenLabels.includes(currentDish.sizes[0].label);
-      document.getElementById('modalDesc').textContent = currentDish.desc || '';
-      document.querySelector('#modalSizeSection .modal__section-title').childNodes[0].textContent = (currentDish.sizeLabel || 'Размер') + ' ';
+      const descEl = document.getElementById('modalDesc');
+      descEl.textContent = currentDish.desc || '';
+      descEl.style.marginBottom = currentDish.desc ? '' : '8px';
+      const sizeTitle = document.querySelector('#modalSizeSection .modal__section-title');
+      if (currentDish.sizeLabel === '') {
+        sizeTitle.style.display = 'none';
+      } else {
+        sizeTitle.style.display = '';
+        sizeTitle.childNodes[0].textContent = (currentDish.sizeLabel || 'Размер') + ' ';
+      }
       if (!showSizes) {
         sizeSection.style.display = 'none';
       } else {
