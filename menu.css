@@ -683,9 +683,11 @@
   .modal {
     max-width: 100%;
     width: 100%;
-    max-height: 92vh;
+    max-height: 88vh;
     border-radius: 20px 20px 0 0;
     animation: modalSlideUp 0.3s ease;
+    display: flex;
+    flex-direction: column;
   }
 
   @keyframes modalSlideUp {
@@ -693,15 +695,35 @@
     to   { transform: translateY(0);    opacity: 1; }
   }
 
+  /* Disable scroll on modal root — only .modal__content scrolls */
+  .modal {
+    overflow-y: visible;
+  }
+
+  /* Sticky header bar with close button — always visible */
+  .modal__close {
+    position: sticky;
+    top: 0;
+    align-self: flex-end;
+    margin: 12px 12px 0;
+    z-index: 10;
+    flex-shrink: 0;
+  }
+
   .modal__img-wrap {
     aspect-ratio: 4 / 3;
-    border-radius: 20px 20px 0 0;
+    border-radius: 0;
+    flex-shrink: 0;
+  }
+
+  .modal__content {
+    overflow-y: auto;
+    flex: 1;
+    padding: 18px 20px 24px;
   }
 
   .modal__name { font-size: 17px; }
   .modal__desc { font-size: 12px; margin-bottom: 18px; }
-
-  .modal__content { padding: 18px 20px 24px; }
 
   .modal__footer {
     flex-direction: row;
