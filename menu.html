@@ -38,29 +38,30 @@
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal" id="modal">
       <button class="modal__close" id="modalClose" aria-label="Закрыть">&#x2715;</button>
-      <div class="modal__img-wrap">
-        <img class="modal__img" id="modalImg" src="" alt="" />
+      <div class="modal__scroll-zone">
+        <div class="modal__img-wrap">
+          <img class="modal__img" id="modalImg" src="" alt="" />
+        </div>
+        <div class="modal__content">
+          <h2 class="modal__name" id="modalName"></h2>
+          <p class="modal__desc" id="modalDesc"></p>
+
+          <!-- Размер -->
+          <div class="modal__section" id="modalSizeSection">
+            <p class="modal__section-title">Размер</p>
+            <div class="modal__options" id="modalSizes"></div>
+          </div>
+
+          <!-- Добавки -->
+          <div class="modal__section" id="modalExtrasSection">
+            <p class="modal__section-title">Добавки <span class="modal__section-hint" id="modalExtrasHint">(можно несколько)</span></p>
+            <div class="modal__extras" id="modalExtras"></div>
+          </div>
+        </div>
       </div>
-      <div class="modal__content">
-        <h2 class="modal__name" id="modalName"></h2>
-        <p class="modal__desc" id="modalDesc"></p>
-
-        <!-- Размер -->
-        <div class="modal__section" id="modalSizeSection">
-          <p class="modal__section-title">Размер</p>
-          <div class="modal__options" id="modalSizes"></div>
-        </div>
-
-        <!-- Добавки -->
-        <div class="modal__section" id="modalExtrasSection">
-          <p class="modal__section-title">Добавки <span class="modal__section-hint" id="modalExtrasHint">(можно несколько)</span></p>
-          <div class="modal__extras" id="modalExtras"></div>
-        </div>
-
-        <div class="modal__footer">
-          <span class="modal__total" id="modalTotal"></span>
-          <button class="modal__btn" id="modalOrderBtn">Заказать на Chibbis</button>
-        </div>
+      <div class="modal__footer">
+        <span class="modal__total" id="modalTotal"></span>
+        <button class="modal__btn" id="modalOrderBtn">Заказать на Chibbis</button>
       </div>
     </div>
   </div>
