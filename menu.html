@@ -54,7 +54,7 @@
 
           <!-- Добавки -->
           <div class="modal__section" id="modalExtrasSection">
-            <p class="modal__section-title">Добавки <span class="modal__section-hint" id="modalExtrasHint">(можно несколько)</span></p>
+            <p class="modal__section-title">Добавки:</p>
             <div class="modal__extras" id="modalExtras"></div>
           </div>
         </div>
@@ -470,7 +470,6 @@
         `).join('');
       }
 
-      document.getElementById('modalExtrasHint').style.display = currentDish.extras.length > 1 ? 'inline' : 'none';
       updateTotal();
       document.getElementById('modalOverlay').classList.add('modal-overlay--open');
       document.body.style.overflow = 'hidden';
