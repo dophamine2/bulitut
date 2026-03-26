@@ -176,7 +176,7 @@
           <p class="about-text">Мы верим, что вкусная еда — это не просто еда, это настроение. Приходите — и вы вернётесь снова.</p>
         </div>
         <div class="about-grid__img">
-          <img src="images/webp/about.webp" alt="О нас" class="about-img" />
+          <img src="images/webp/about.webp" alt="О нас" class="about-img about-img--clickable" onclick="openLightbox('images/webp/about.webp')" />
         </div>
       </div>
     </section>
@@ -397,27 +397,46 @@
     });
   </script>
 
-  <script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_API_KEY&lang=ru_RU" type="text/javascript"></script>
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
   <script>
     ymaps.ready(init);
     function init(){
       var myMap = new ymaps.Map("footer-map", {
-        center: [53.7098, 91.6872],
-        zoom: 13,
-        controls: ['zoomControl']
+        center: [53.692, 91.681],
+        zoom: 14,
+        controls: ['zoomControl', 'fullscreenControl']
       });
-      
+
+      myMap.behaviors.disable('scrollZoom');
+
       var locations = [
-        {coords: [53.7098, 91.6872], name: 'ул. Ванеева, 1А'},
-        {coords: [53.7050, 91.6950], name: 'ул. Абаканская, 71/1'},
-        {coords: [53.699882, 91.710499], name: 'Большевистская ул., 37Б'}
+        {
+          coords: [53.689763, 91.673165],
+          hint: 'ул. Ванеева, 1А',
+          balloon: '<b>Были Тут</b><br>ул. Ванеева, 1А<br>⏰ 9:00 — 23:00'
+        },
+        {
+          coords: [53.686553, 91.658684],
+          hint: 'ул. Абаканская, 71/1',
+          balloon: '<b>Были Тут</b><br>ул. Абаканская, 71/1<br>⏰ 9:00 — 23:00'
+        },
+        {
+          coords: [53.699882, 91.710499],
+          hint: 'Большевистская ул., 37Б',
+          balloon: '<b>Были Тут</b><br>Большевистская ул., 37Б<br>⏰ 9:00 — 23:00'
+        }
       ];
-      
+
       locations.forEach(function(loc) {
         var placemark = new ymaps.Placemark(loc.coords, {
-          balloonContent: loc.name
+          hintContent: loc.hint
         }, {
-          preset: 'islands#redDotIcon'
+          preset: 'islands#icon',
+          iconColor: '#015d5a'
+        });
+        placemark.events.add('click', function() {
+          var url = 'https://yandex.ru/maps/?pt=' + loc.coords[1] + ',' + loc.coords[0] + '&z=17&l=map';
+          window.open(url, '_blank');
         });
         myMap.geoObjects.add(placemark);
       });

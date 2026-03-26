@@ -647,6 +647,11 @@ body {
   display: block;
 }
 
+.about-img--clickable {
+  cursor: pointer;
+}
+
+
 /* ===========================
    PAGE TRANSITION
    =========================== */
