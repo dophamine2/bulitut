@@ -1220,10 +1220,9 @@ body {
   }
   .about-text { font-size: 16px; }
 
-  /* Addresses */
-  .addresses-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .addresses-grid .address-card:nth-child(3) { display: none; }
-  .address-card { min-height: 420px; }
+  /* Addresses — 3 cols on tablet, all cards visible */
+  .addresses-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .address-card { min-height: 360px; }
 
   /* Gallery */
   .gallery-grid {
