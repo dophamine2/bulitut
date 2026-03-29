@@ -61,7 +61,7 @@
       </div>
       <div class="modal__footer">
         <span class="modal__total" id="modalTotal"></span>
-        <button class="modal__btn" id="modalOrderBtn">Заказать на Chibbis</button>
+        <button class="modal__btn" id="modalOrderBtn">Заказать</button>
       </div>
     </div>
   </div>
@@ -72,7 +72,7 @@
       <a href="index.html" class="menu-navbar__logo">
         <img src="images/logo.svg" alt="Логотип" />
       </a>
-      <a href="index.html" class="menu-navbar__brand-name">БЫЛИ ТУТ</a>
+      <span class="menu-navbar__brand-name">БЫЛИ ТУТ</span>
     </div>
     <button class="menu-navbar__burger" id="burgerBtn" aria-label="Меню">
       <span></span><span></span><span></span>
@@ -122,7 +122,9 @@
     // =====================
     const DISH_EXTRAS = [
       { name: 'Халапеньо', price: 40 },
-      { name: 'Кетчуп', price: 40 },
+      { name: 'Ананас', price: 30 },
+      { name: 'Сыр', price: 40 },
+      { name: 'Кетчуп', price: 30 },
     ];
 
     const MENU = [
@@ -187,7 +189,7 @@
             name: 'Буррито с ананасом',
             desc: 'Лепешка пшеничная, сыр, помидор, лист салата, наггетсы, соус фирменный',
             img: 'https://scdn.chibbis.ru/live/products/eb608ba53ce6cd9258bc0aa42e55030e.jpeg',
-            sizes: [{ label: 'Стандарт', weight: '250 г', price: 340 }],
+            sizes: [{ label: 'Стандарт', weight: '250 г', price: 320 }],
             extras: DISH_EXTRAS,
           },
         ]
@@ -239,7 +241,7 @@
             name: 'Кесадилья сырная',
             desc: 'Лепешка сырная, сыр, помидор, соус фирменный',
             img: 'https://scdn.chibbis.ru/live/products/1d6ba796e4ebadb2f4aa55ac02583163.jpeg',
-            sizes: [{ label: 'Стандарт', weight: '300 г', price: 350 }],
+            sizes: [{ label: 'Стандарт', weight: '300 г', price: 300 }],
             extras: DISH_EXTRAS,
           },
         ]
@@ -252,49 +254,49 @@
             desc: 'Куриное филе темпура, сухари, соус фирменный',
             img: 'https://scdn.chibbis.ru/live/products/86fba8380ae6ff0593bd6f4945de151c.jpeg',
             sizes: [{ label: 'Стандарт', weight: '150 г', price: 250 }],
-            extras: [{ name: 'Сырный соус', price: 40 }, { name: 'Кетчуп', price: 40 }, { name: 'Чесночный соус', price: 40 }],
+            extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }],
           },
           {
             name: 'ПутИн с курицей',
             desc: 'Курица на гриле, картофель фри, сыр, соус фирменный',
             img: 'https://scdn.chibbis.ru/live/products/13fa6fe22632cbcae45cbbd11815d0f5.jpeg',
             sizes: [{ label: 'Стандарт', weight: '350 г', price: 290 }],
-            extras: [{ name: 'Сырный соус', price: 40 }, { name: 'Кетчуп', price: 40 }, { name: 'Чесночный соус', price: 40 }],
+            extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }],
           },
           {
             name: 'ПутИн с беконом',
             desc: 'Бекон, картофель фри, сыр, соус фирменный',
             img: 'https://scdn.chibbis.ru/live/products/2fa3f66f73d1575b68199aa381e03b1f.jpeg',
             sizes: [{ label: 'Стандарт', weight: '300 г', price: 290 }],
-            extras: [{ name: 'Сырный соус', price: 40 }, { name: 'Кетчуп', price: 40 }, { name: 'Чесночный соус', price: 40 }],
+            extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }],
           },
           {
             name: 'Крылья Баффало + соус тар-тар',
             desc: '',
             img: 'https://scdn.chibbis.ru/live/products/073e91cf0fec39fb58b22b70aba3fc64.jpeg',
             sizes: [{ label: 'Стандарт', weight: '250 г', price: 340 }],
-            extras: [{ name: 'Сырный соус', price: 40 }, { name: 'Кетчуп', price: 40 }],
+            extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }],
           },
           {
             name: 'Креветки темпура',
             desc: '',
             img: 'https://scdn.chibbis.ru/live/products/96cd957d067231466a02fc3b6c1ce0c1.jpeg',
             sizes: [{ label: 'Стандарт', weight: '300 г', price: 390 }],
-            extras: [{ name: 'Сырный соус', price: 40 }, { name: 'Кетчуп', price: 40 }],
+            extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }],
           },
           {
             name: 'Сырные палочки',
             desc: 'Подаются с чесночным соусом',
             img: 'https://scdn.chibbis.ru/live/products/fb50c38b66756ddd8fb40ea96e7789de.jpeg',
             sizes: [{ label: 'Стандарт', weight: '150 г', price: 290 }],
-            extras: [{ name: 'Сырный соус', price: 40 }, { name: 'Кетчуп', price: 40 }],
+            extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }],
           },
           {
             name: 'Картофель фри',
             desc: '',
             img: 'https://scdn.chibbis.ru/live/products/e5661539902188691bd5f2638e81b342.jpeg',
             sizes: [{ label: 'Маленькая', weight: '120 г', price: 150 }, { label: 'Большая', weight: '170 г', price: 200 }],
-            extras: [{ name: 'Сырный соус', price: 40 }, { name: 'Кетчуп', price: 40 }, { name: 'Чесночный соус', price: 40 }],
+            extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }],
           },
         ]
       },
@@ -348,6 +350,26 @@
             extras: [{ name: 'Ананас', price: 50 }],
           },
           {
+            name: 'Чай',
+            desc: '',
+            sizeLabel: 'Вкус',
+            img: 'images/webp/tea.webp',
+            imgPosition: 'center 40%',
+            sizes: [
+              { label: 'Чёрный', weight: '300 мл', price: 50 },
+              { label: 'Зелёный', weight: '300 мл', price: 50 },
+            ],
+            extras: [],
+          },
+          {
+            name: 'Тёплое молоко',
+            desc: '',
+            img: 'images/webp/milk.webp',
+            imgPosition: 'center 40%',
+            sizes: [{ label: 'Стандарт', weight: '200 мл', price: 80 }],
+            extras: [],
+          },
+          {
             name: 'Фреш апельсиновый',
             desc: '',
             img: 'https://scdn.chibbis.ru/live/products/5cfeb83b8b90b59d7e14fac7d0ea53f4.jpeg',
@@ -360,12 +382,14 @@
             sizeLabel: '',
             img: 'https://scdn.chibbis.ru/live/products/ac8c5173bd63e856b50b17282699414a.jpeg',
             sizes: [
+              { label: 'Эспрессо', weight: '100 мл', price: 100 },
               { label: 'Американо', weight: '200 мл', price: 120 },
               { label: 'Капучино', weight: '250 мл', price: 145 },
               { label: 'Латте', weight: '350 мл', price: 165 },
               { label: 'Двойной капучино', weight: '350 мл', price: 175 },
+              { label: 'Флэт уайт', weight: '150 мл', price: 145 },
             ],
-            extras: [{ name: 'Сироп в кофе', price: 40 }],
+            extras: [{ name: 'Сироп в кофе', price: 30 }],
           },
         ]
       },
@@ -377,14 +401,14 @@
             desc: 'Кольца кальмара, Гренки чесночные, Креветки темпура, Сырные палочки, Картофель фри, Соус чесночный, Соус Тар-Тар, Соус цезарь',
             img: 'https://scdn.chibbis.ru/live/products/c20d83097f65f2dd616b6ea8f8ed5d47.jpeg',
             sizes: [{ label: 'MAX', weight: '600 г', price: 990 }],
-            extras: [{ name: 'Сырный соус', price: 40 }, { name: 'Кетчуп', price: 40 }, { name: 'Чесночный соус', price: 40 }],
+            extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }],
           },
           {
             name: 'Пивная закуска MINI',
             desc: 'Наггетсы, Картофель фри, Гренки, Крылышки баффало, Соус чесночный, Кетчуп',
             img: 'https://scdn.chibbis.ru/live/products/37fa87ee2873e5a54a41d6e1a6a1f6a6.jpeg',
             sizes: [{ label: 'MINI', weight: '500 г', price: 690 }],
-            extras: [{ name: 'Сырный соус', price: 40 }, { name: 'Кетчуп', price: 40 }, { name: 'Чесночный соус', price: 40 }],
+            extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }],
           },
         ]
       },
@@ -435,6 +459,7 @@
       document.getElementById('modalImg').src = currentDish.img || '';
       document.getElementById('modalImg').alt = currentDish.name;
       document.getElementById('modalImg').style.display = currentDish.img ? 'block' : 'none';
+      document.getElementById('modalImg').style.objectPosition = currentDish.imgPosition || 'center';
 
       // Размеры
       const sizesEl = document.getElementById('modalSizes');
@@ -524,7 +549,18 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
     document.getElementById('modalOrderBtn').addEventListener('click', () => {
-      window.open('https://chibbis.ru/minusinsk/restaurant/byli-tut/menu', '_blank');
+      const phone = '+79538522727';
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.location.href = 'tel:' + phone;
+      } else {
+        navigator.clipboard.writeText(phone).then(() => {
+          const btn = document.getElementById('modalOrderBtn');
+          const prev = btn.textContent;
+          btn.textContent = 'Номер скопирован';
+          setTimeout(() => { btn.textContent = prev; }, 2000);
+        });
+      }
     });
 
     // =====================
