@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Админ — Были Тут</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+  <link rel="stylesheet" href="admin.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>Были Тут<br>Админ панель</h1>
+    <label for="pwdInput">Пароль</label>
+    <input type="password" id="pwdInput" placeholder="••••••••" autocomplete="current-password" />
+    <div class="login-error" id="loginError"></div>
+    <button class="btn btn--full" onclick="doLogin()">Войти</button>
+  </div>
+</div>
+
+<!-- ============ ADMIN APP ============ -->
+<div class="admin-wrap" id="adminApp" style="display:none">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__logo">
+      <div class="sidebar__logo-title">Были Тут</div>
+      <div class="sidebar__logo-sub">Панель управления</div>
+    </div>
+    <nav class="sidebar__nav">
+      <div class="sidebar__item sidebar__item--active" data-section="dishes" onclick="showSection('dishes', this)">
+        <span class="ico">🍽</span> Блюда
+      </div>
+      <div class="sidebar__item" data-section="categories" onclick="showSection('categories', this)">
+        <span class="ico">📂</span> Категории
+      </div>
+      <div class="sidebar__item" data-section="extras" onclick="showSection('extras', this)">
+        <span class="ico">➕</span> Добавки
+      </div>
+    </nav>
+    <div class="sidebar__bottom">
+      <a href="menu.html" target="_blank" class="btn btn--ghost btn--sm" style="width:100%;justify-content:center;margin-top:0">
+        ↗ Открыть меню
+      </a>
+      <button class="btn btn--ghost btn--sm" style="width:100%;justify-content:center;margin-top:8px" onclick="doLogout()">
+        Выйти
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ===== DISHES SECTION ===== -->
+    <div class="section section--active" id="section-dishes">
+      <div class="topbar">
+        <div class="topbar__title">Блюда</div>
+        <button class="btn" onclick="openAddDish()">+ Добавить блюдо</button>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" id="dishSearch" placeholder="Поиск по названию…" oninput="renderDishesTable()" />
+        <select id="dishCatFilter" onchange="renderDishesTable()">
+          <option value="">Все категории</option>
+        </select>
+      </div>
+
+      <div class="dishes-table-wrap">
+        <table class="dishes-table">
+          <thead>
+            <tr>
+              <th>Фото</th>
+              <th>Название</th>
+              <th>Категория</th>
+              <th>Цена от</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="dishesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== CATEGORIES SECTION ===== -->
+    <div class="section" id="section-categories">
+      <div class="topbar">
+        <div class="topbar__title">Категории</div>
+      </div>
+
+      <div class="add-form">
+        <div class="add-form__title">Новая категория</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Название (отображаемое)</label>
+            <input type="text" id="newCatTitle" placeholder="Например: ПИЦЦА" />
+          </div>
+          <div class="field">
+            <label>ID (латиница, без пробелов)</label>
+            <input type="text" id="newCatId" placeholder="Например: pizza" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn" onclick="addCategory()">Добавить категорию</button>
+        </div>
+      </div>
+
+      <div class="section-hdr">
+        <span class="section-hdr__title">Все категории</span>
+        <span style="font-size:12px;color:#888">Перетащите для изменения порядка</span>
+      </div>
+      <div class="categories-list" id="categoriesList"></div>
+    </div>
+
+    <!-- ===== EXTRAS SECTION ===== -->
+    <div class="section" id="section-extras">
+      <div class="topbar">
+        <div class="topbar__title">Добавки по умолчанию</div>
+      </div>
+      <div class="add-form" style="margin-bottom:20px">
+        <div class="add-form__title">Добавить добавку</div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Название</label>
+            <input type="text" id="newExtraName" placeholder="Например: Сыр" />
+          </div>
+          <div class="field">
+            <label>Цена (₽)</label>
+            <input type="number" id="newExtraPrice" placeholder="40" min="0" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn" onclick="addExtra()">Добавить</button>
+        </div>
+      </div>
+
+      <div class="dishes-table-wrap">
+        <table class="dishes-table">
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Цена</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="extrasTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ===== EDIT DISH MODAL ===== -->
+<div class="edit-overlay" id="editOverlay">
+  <div class="edit-modal">
+    <div class="edit-modal__header">
+      <div class="edit-modal__title" id="editModalTitle">Редактировать блюдо</div>
+      <button class="edit-modal__close" onclick="closeEditModal()">✕</button>
+    </div>
+
+    <input type="hidden" id="editCatId" />
+    <input type="hidden" id="editDishIdx" />
+
+    <div class="form-grid form-grid--full" style="margin-bottom:14px">
+      <div class="field">
+        <label>Название блюда</label>
+        <input type="text" id="editName" placeholder="Название" />
+      </div>
+    </div>
+
+    <div class="form-grid form-grid--full" style="margin-bottom:14px">
+      <div class="field">
+        <label>Описание</label>
+        <textarea id="editDesc" placeholder="Состав / описание блюда"></textarea>
+      </div>
+    </div>
+
+    <div class="form-grid form-grid--full" style="margin-bottom:6px">
+      <div class="field">
+        <label>URL фото</label>
+        <input type="text" id="editImg" placeholder="https://…" oninput="previewImg()" />
+        <div class="img-preview-wrap">
+          <div class="img-preview-placeholder" id="imgPreviewPlaceholder">🖼</div>
+          <img class="img-preview" id="imgPreview" src="" alt="" style="display:none" />
+          <span style="font-size:12px;color:#888;max-width:300px">Вставьте ссылку на изображение. Можно использовать прямые URL из интернета.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:14px">
+      <label>Категория</label>
+      <select id="editCatSelect"></select>
+    </div>
+
+    <!-- SIZES -->
+    <div class="section-hdr" style="margin-top:16px">
+      <span class="section-hdr__title">Размеры / варианты</span>
+      <button class="btn btn--ghost btn--sm" onclick="addSizeRow()">+ Добавить</button>
+    </div>
+    <div class="sizes-editor" id="sizesEditor"></div>
+
+    <!-- EXTRAS -->
+    <div class="section-hdr" style="margin-top:16px">
+      <span class="section-hdr__title">Добавки</span>
+      <button class="btn btn--ghost btn--sm" onclick="addExtraRow()">+ Добавить</button>
+    </div>
+    <div class="extras-editor" id="extrasEditor"></div>
+
+    <div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end">
+      <button class="btn btn--ghost" onclick="closeEditModal()">Отмена</button>
+      <button class="btn" onclick="saveDish()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+// =====================================================================
+// PASSWORD
+// =====================================================================
+const ADMIN_PASSWORD = 'bulitut2024';
+
+function doLogin() {
+  const val = document.getElementById('pwdInput').value;
+  if (val === ADMIN_PASSWORD) {
+    sessionStorage.setItem('admin_auth', '1');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'flex';
+    initApp();
+  } else {
+    document.getElementById('loginError').textContent = 'Неверный пароль';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('admin_auth');
+  location.reload();
+}
+
+document.getElementById('pwdInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+if (sessionStorage.getItem('admin_auth') === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminApp').style.display = 'flex';
+  window.addEventListener('DOMContentLoaded', initApp);
+}
+
+// =====================================================================
+// DEFAULT DATA (mirrors menu.html)
+// =====================================================================
+const DEFAULT_EXTRAS = [
+  { name: 'Халапеньо', price: 40 },
+  { name: 'Ананас', price: 30 },
+  { name: 'Сыр', price: 40 },
+  { name: 'Кетчуп', price: 30 },
+];
+
+const DEFAULT_MENU = [
+  {
+    id: 'shawarma', title: 'ШАУРМА',
+    dishes: [
+      { name: 'Шаурма классическая', desc: 'Лаваш, курица на гриле, помидор, огурец, капуста, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/6652fc90200158997948f268ae451c4c.jpeg', sizes: [{ label: 'Маленькая', weight: '300 г', price: 250 }, { label: 'Большая', weight: '450 г', price: 350 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Шаурма премиум', desc: 'Лаваш, курица на гриле, помидор, огурец, капуста, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/dc4d22c814ae5d5d6c7549d0aafd8361.jpeg', sizes: [{ label: 'Маленькая', weight: '300 г', price: 280 }, { label: 'Большая', weight: '450 г', price: 380 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Шаурма с говядиной', desc: 'Лаваш, курица на гриле, помидор, огурец, капуста, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/7bc7b233bffcbd974f9d01c107401c81.jpeg', sizes: [{ label: 'Маленькая', weight: '300 г', price: 270 }, { label: 'Большая', weight: '450 г', price: 370 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+    ]
+  },
+  {
+    id: 'burrito', title: 'БУРРИТО',
+    dishes: [
+      { name: 'Буррито с курицей', desc: 'Лепешка пшеничная, сыр, помидор, лист салата, наггетсы, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/ae2b91588781bffca4c8f9ffd2fbae34.jpeg', sizes: [{ label: 'Маленькая', weight: '250 г', price: 320 }, { label: 'Большая', weight: '350 г', price: 420 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Буррито с говядиной', desc: 'Лепешка пшеничная, сыр, помидор, лист салата, котлета говяжья, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/5c0df9bed5789366dab9067ba39f7795.jpeg', sizes: [{ label: 'Маленькая', weight: '250 г', price: 320 }, { label: 'Большая', weight: '350 г', price: 420 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Буррито сырная с курицей', desc: 'Лепешка пшеничная, сыр, помидор, лист салата, наггетсы, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/ae2b91588781bffca4c8f9ffd2fbae34.jpeg', sizes: [{ label: 'Стандарт', weight: '300 г', price: 340 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Буррито сырная с говядиной', desc: 'Лепешка пшеничная, сыр, помидор, лист салата, котлета говяжья, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/5c0df9bed5789366dab9067ba39f7795.jpeg', sizes: [{ label: 'Стандарт', weight: '300 г', price: 340 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Буррито с ананасом', desc: 'Лепешка пшеничная, сыр, помидор, лист салата, наггетсы, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/eb608ba53ce6cd9258bc0aa42e55030e.jpeg', sizes: [{ label: 'Стандарт', weight: '250 г', price: 320 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+    ]
+  },
+  {
+    id: 'burgers', title: 'БУРГЕРЫ',
+    dishes: [
+      { name: 'Гамбургер с говядиной', desc: 'Булочка, лист салата, котлета говяжья, маринованный огурец, помидор, сыр чеддер, лук фри, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/c8f20b055ffe4b167bc9c0aa480bc08e.jpeg', sizes: [{ label: 'Стандарт', weight: '350 г', price: 320 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Гамбургер с курицей', desc: 'Булочка, лист салата, наггетсы, маринованный огурец, помидор, сыр, жареный лук, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/3844ef4fee00afbcf362286ddadd8eeb.jpeg', sizes: [{ label: 'Стандарт', weight: '350 г', price: 310 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Гамбургер с говядиной и беконом', desc: 'Булочка, лист салата, котлета говяжья, бекон, маринованный огурец, помидор, сыр, жареный лук, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/c8f20b055ffe4b167bc9c0aa480bc08e.jpeg', sizes: [{ label: 'Стандарт', weight: '350 г', price: 330 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+    ]
+  },
+  {
+    id: 'kesadiliya', title: 'КЕСАДИЛЬЯ',
+    dishes: [
+      { name: 'Кесадилья с курицей', desc: 'Лепешка сырная, сыр, помидор, курица на гриле, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/9c40386a463a9d2fd403864ff2dfe848.jpeg', sizes: [{ label: 'Стандарт', weight: '300 г', price: 350 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Кесадилья с говядиной', desc: 'Лепешка сырная, сыр, помидор, говядина, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/1d6ba796e4ebadb2f4aa55ac02583163.jpeg', sizes: [{ label: 'Стандарт', weight: '300 г', price: 350 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Кесадилья сырная', desc: 'Лепешка сырная, сыр, помидор, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/1d6ba796e4ebadb2f4aa55ac02583163.jpeg', sizes: [{ label: 'Стандарт', weight: '300 г', price: 300 }], extras: [{ name: 'Халапеньо', price: 40 }, { name: 'Ананас', price: 30 }, { name: 'Сыр', price: 40 }, { name: 'Кетчуп', price: 30 }] },
+    ]
+  },
+  {
+    id: 'snacks', title: 'ЗАКУСКИ',
+    dishes: [
+      { name: 'Наггетсы', desc: 'Куриное филе темпура, сухари, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/86fba8380ae6ff0593bd6f4945de151c.jpeg', sizes: [{ label: 'Стандарт', weight: '150 г', price: 250 }], extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }] },
+      { name: 'ПутИн с курицей', desc: 'Курица на гриле, картофель фри, сыр, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/13fa6fe22632cbcae45cbbd11815d0f5.jpeg', sizes: [{ label: 'Стандарт', weight: '350 г', price: 290 }], extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }] },
+      { name: 'ПутИн с беконом', desc: 'Бекон, картофель фри, сыр, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/2fa3f66f73d1575b68199aa381e03b1f.jpeg', sizes: [{ label: 'Стандарт', weight: '300 г', price: 290 }], extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }] },
+      { name: 'Крылья Баффало + соус тар-тар', desc: '', img: 'https://scdn.chibbis.ru/live/products/073e91cf0fec39fb58b22b70aba3fc64.jpeg', sizes: [{ label: 'Стандарт', weight: '250 г', price: 340 }], extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Креветки темпура', desc: '', img: 'https://scdn.chibbis.ru/live/products/96cd957d067231466a02fc3b6c1ce0c1.jpeg', sizes: [{ label: 'Стандарт', weight: '300 г', price: 390 }], extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Сырные палочки', desc: 'Подаются с чесночным соусом', img: 'https://scdn.chibbis.ru/live/products/fb50c38b66756ddd8fb40ea96e7789de.jpeg', sizes: [{ label: 'Стандарт', weight: '150 г', price: 290 }], extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }] },
+      { name: 'Картофель фри', desc: '', img: 'https://scdn.chibbis.ru/live/products/e5661539902188691bd5f2638e81b342.jpeg', sizes: [{ label: 'Маленькая', weight: '120 г', price: 150 }, { label: 'Большая', weight: '170 г', price: 200 }], extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }] },
+    ]
+  },
+  {
+    id: 'salads', title: 'САЛАТЫ',
+    dishes: [
+      { name: 'Салат Цезарь с курицей', desc: 'Курица на гриле, лист салата, огурец, помидор, сыр, сухари, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/9a1ca2264c3b3e4c7a57cb7953705413.jpeg', sizes: [{ label: 'Стандарт', weight: '250 г', price: 200 }], extras: [] },
+      { name: 'Салат Цезарь с креветками', desc: 'Креветки темпура, лист салата, огурец, помидор, сыр, сухари, соус фирменный', img: 'https://scdn.chibbis.ru/live/products/338ff89b36a478516b6f8a0602a54d25.jpeg', sizes: [{ label: 'Стандарт', weight: '250 г', price: 250 }], extras: [] },
+    ]
+  },
+  {
+    id: 'drinks', title: 'НАПИТКИ',
+    dishes: [
+      { name: 'Молочный коктейль', desc: '', img: 'https://scdn.chibbis.ru/live/products/62b961aeff9e78e60bc10c4e997c43c7.jpeg', sizes: [{ label: 'Банан', weight: '350 мл', price: 220 }, { label: 'Малина', weight: '350 мл', price: 220 }, { label: 'Шоколад', weight: '350 мл', price: 220 }, { label: 'Бабл гам', weight: '350 мл', price: 220 }], extras: [] },
+      { name: 'Лимонад', desc: '', img: 'https://scdn.chibbis.ru/live/products/b9aa802634aebc6d42968ddc62a33169.jpeg', sizes: [{ label: 'Малина', weight: '350 мл', price: 160 }, { label: 'Мохито', weight: '350 мл', price: 160 }, { label: 'Ежевика', weight: '350 мл', price: 160 }, { label: 'Арбуз', weight: '350 мл', price: 160 }, { label: 'Тархун', weight: '350 мл', price: 160 }], extras: [{ name: 'Ананас', price: 50 }] },
+      { name: 'Чай', desc: '', img: 'images/webp/tea.webp', sizes: [{ label: 'Чёрный', weight: '300 мл', price: 50 }, { label: 'Зелёный', weight: '300 мл', price: 50 }], extras: [] },
+      { name: 'Тёплое молоко', desc: '', img: 'images/webp/milk.webp', sizes: [{ label: 'Стандарт', weight: '200 мл', price: 80 }], extras: [] },
+      { name: 'Фреш апельсиновый', desc: '', img: 'https://scdn.chibbis.ru/live/products/5cfeb83b8b90b59d7e14fac7d0ea53f4.jpeg', sizes: [{ label: 'Стандарт', weight: '300 мл', price: 250 }], extras: [] },
+      { name: 'Кофе', desc: '', img: 'https://scdn.chibbis.ru/live/products/ac8c5173bd63e856b50b17282699414a.jpeg', sizes: [{ label: 'Эспрессо', weight: '100 мл', price: 100 }, { label: 'Американо', weight: '200 мл', price: 120 }, { label: 'Капучино', weight: '250 мл', price: 145 }, { label: 'Латте', weight: '350 мл', price: 165 }, { label: 'Двойной капучино', weight: '350 мл', price: 175 }, { label: 'Флэт уайт', weight: '150 мл', price: 145 }], extras: [{ name: 'Сироп в кофе', price: 30 }] },
+    ]
+  },
+  {
+    id: 'beer', title: 'ПИВНАЯ ЗАКУСКА',
+    dishes: [
+      { name: 'Пивная тарелка MAX', desc: 'Кольца кальмара, Гренки чесночные, Креветки темпура, Сырные палочки, Картофель фри, Соус чесночный, Соус Тар-Тар, Соус цезарь', img: 'https://scdn.chibbis.ru/live/products/c20d83097f65f2dd616b6ea8f8ed5d47.jpeg', sizes: [{ label: 'MAX', weight: '600 г', price: 990 }], extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }] },
+      { name: 'Пивная закуска MINI', desc: 'Наггетсы, Картофель фри, Гренки, Крылышки баффало, Соус чесночный, Кетчуп', img: 'https://scdn.chibbis.ru/live/products/37fa87ee2873e5a54a41d6e1a6a1f6a6.jpeg', sizes: [{ label: 'MINI', weight: '500 г', price: 690 }], extras: [{ name: 'Сырный соус', price: 30 }, { name: 'Кетчуп', price: 30 }, { name: 'Чесночный соус', price: 30 }] },
+    ]
+  },
+];
+
+// =====================================================================
+// STATE
+// =====================================================================
+let MENU = [];
+let GLOBAL_EXTRAS = [];
+
+function loadData() {
+  const savedMenu = localStorage.getItem('admin_menu');
+  const savedExtras = localStorage.getItem('admin_extras');
+  MENU = savedMenu ? JSON.parse(savedMenu) : JSON.parse(JSON.stringify(DEFAULT_MENU));
+  GLOBAL_EXTRAS = savedExtras ? JSON.parse(savedExtras) : JSON.parse(JSON.stringify(DEFAULT_EXTRAS));
+}
+
+function saveData() {
+  localStorage.setItem('admin_menu', JSON.stringify(MENU));
+  localStorage.setItem('admin_extras', JSON.stringify(GLOBAL_EXTRAS));
+}
+
+// =====================================================================
+// INIT
+// =====================================================================
+function initApp() {
+  loadData();
+  renderCategoryFilter();
+  renderDishesTable();
+  renderCategoriesList();
+  renderExtrasTable();
+}
+
+// =====================================================================
+// SECTION NAVIGATION
+// =====================================================================
+function showSection(name, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('section--active'));
+  document.querySelectorAll('.sidebar__item').forEach(i => i.classList.remove('sidebar__item--active'));
+  document.getElementById('section-' + name).classList.add('section--active');
+  el.classList.add('sidebar__item--active');
+}
+
+// =====================================================================
+// DISHES TABLE
+// =====================================================================
+function renderCategoryFilter() {
+  const sel = document.getElementById('dishCatFilter');
+  const editSel = document.getElementById('editCatSelect');
+  sel.innerHTML = '<option value="">Все категории</option>' +
+    MENU.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+  editSel.innerHTML = MENU.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+}
+
+function renderDishesTable() {
+  const search = document.getElementById('dishSearch').value.toLowerCase();
+  const catFilter = document.getElementById('dishCatFilter').value;
+  const tbody = document.getElementById('dishesTableBody');
+  let rows = '';
+  let total = 0;
+
+  MENU.forEach(cat => {
+    if (catFilter && cat.id !== catFilter) return;
+    cat.dishes.forEach((dish, idx) => {
+      if (search && !dish.name.toLowerCase().includes(search)) return;
+      const minPrice = Math.min(...dish.sizes.map(s => s.price));
+      const maxPrice = Math.max(...dish.sizes.map(s => s.price));
+      const priceStr = minPrice < maxPrice ? `от ${minPrice} ₽` : `${minPrice} ₽`;
+      rows += `
+        <tr>
+          <td>
+            ${dish.img
+              ? `<img class="dish-thumb" src="${dish.img}" alt="" onerror="this.style.display='none'" />`
+              : `<div class="dish-thumb-placeholder">🍽</div>`}
+          </td>
+          <td class="dish-name-cell">${dish.name}</td>
+          <td><span class="dish-cat-badge">${cat.title}</span></td>
+          <td class="dish-price-cell">${priceStr}</td>
+          <td style="text-align:right;white-space:nowrap">
+            <button class="btn btn--ghost btn--sm" onclick="openEditDish('${cat.id}', ${idx})">Изменить</button>
+            <button class="btn btn--danger btn--sm" style="margin-left:4px" onclick="deleteDish('${cat.id}', ${idx})">Удалить</button>
+          </td>
+        </tr>`;
+      total++;
+    });
+  });
+
+  if (total === 0) {
+    rows = `<tr><td colspan="5"><div class="empty-state">Блюда не найдены</div></td></tr>`;
+  }
+  tbody.innerHTML = rows;
+}
+
+// =====================================================================
+// CATEGORIES LIST
+// =====================================================================
+function renderCategoriesList() {
+  const list = document.getElementById('categoriesList');
+  if (MENU.length === 0) {
+    list.innerHTML = '<div class="empty-state">Нет категорий</div>';
+    return;
+  }
+  list.innerHTML = MENU.map((cat, idx) => `
+    <div class="cat-row" draggable="true" data-idx="${idx}"
+         ondragstart="dragStart(event,${idx})" ondragover="dragOver(event,${idx})" ondrop="dropCat(event,${idx})" ondragleave="dragLeave(event)">
+      <span class="cat-row__drag">⠿</span>
+      <span class="cat-row__name">${cat.title}</span>
+      <span class="cat-row__id">${cat.id}</span>
+      <div class="cat-row__actions">
+        <button class="btn btn--ghost btn--sm" onclick="openEditCategory(${idx})">Изм.</button>
+        <button class="btn btn--danger btn--sm" onclick="deleteCategory(${idx})">Удалить</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ---- Drag-and-drop for categories ----
+let dragIdx = null;
+
+function dragStart(e, idx) {
+  dragIdx = idx;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function dragOver(e, idx) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.cat-row').forEach(r => r.classList.remove('drag-over'));
+  e.currentTarget.classList.add('drag-over');
+}
+
+function dragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function dropCat(e, targetIdx) {
+  e.preventDefault();
+  if (dragIdx === null || dragIdx === targetIdx) { dragIdx = null; return; }
+  const moved = MENU.splice(dragIdx, 1)[0];
+  MENU.splice(targetIdx, 0, moved);
+  dragIdx = null;
+  saveData();
+  renderCategoriesList();
+  renderCategoryFilter();
+  renderDishesTable();
+  showToast('Порядок сохранён');
+}
+
+function addCategory() {
+  const title = document.getElementById('newCatTitle').value.trim();
+  const id = document.getElementById('newCatId').value.trim().toLowerCase().replace(/\s+/g, '_');
+  if (!title || !id) { showToast('Заполните название и ID'); return; }
+  if (MENU.find(c => c.id === id)) { showToast('Категория с таким ID уже существует'); return; }
+  MENU.push({ id, title, dishes: [] });
+  document.getElementById('newCatTitle').value = '';
+  document.getElementById('newCatId').value = '';
+  saveData();
+  renderCategoriesList();
+  renderCategoryFilter();
+  showToast('Категория добавлена');
+}
+
+function deleteCategory(idx) {
+  if (!confirm(`Удалить категорию «${MENU[idx].title}» и все её блюда?`)) return;
+  MENU.splice(idx, 1);
+  saveData();
+  renderCategoriesList();
+  renderCategoryFilter();
+  renderDishesTable();
+  showToast('Категория удалена');
+}
+
+function openEditCategory(idx) {
+  const cat = MENU[idx];
+  const newTitle = prompt('Новое название категории:', cat.title);
+  if (newTitle === null) return;
+  const newId = prompt('Новый ID (латиница):', cat.id);
+  if (newId === null) return;
+  const trimId = newId.trim().toLowerCase().replace(/\s+/g, '_');
+  const trimTitle = newTitle.trim();
+  if (!trimTitle || !trimId) { showToast('Поля не могут быть пустыми'); return; }
+  MENU[idx].title = trimTitle;
+  MENU[idx].id = trimId;
+  saveData();
+  renderCategoriesList();
+  renderCategoryFilter();
+  renderDishesTable();
+  showToast('Категория обновлена');
+}
+
+// =====================================================================
+// EXTRAS (global)
+// =====================================================================
+function renderExtrasTable() {
+  const tbody = document.getElementById('extrasTableBody');
+  if (GLOBAL_EXTRAS.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state">Нет добавок</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = GLOBAL_EXTRAS.map((e, i) => `
+    <tr>
+      <td>${e.name}</td>
+      <td>${e.price} ₽</td>
+      <td style="text-align:right">
+        <button class="btn btn--danger btn--sm" onclick="deleteExtra(${i})">Удалить</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function addExtra() {
+  const name = document.getElementById('newExtraName').value.trim();
+  const price = parseInt(document.getElementById('newExtraPrice').value);
+  if (!name || isNaN(price)) { showToast('Заполните название и цену'); return; }
+  GLOBAL_EXTRAS.push({ name, price });
+  document.getElementById('newExtraName').value = '';
+  document.getElementById('newExtraPrice').value = '';
+  saveData();
+  renderExtrasTable();
+  showToast('Добавка добавлена');
+}
+
+function deleteExtra(idx) {
+  GLOBAL_EXTRAS.splice(idx, 1);
+  saveData();
+  renderExtrasTable();
+  showToast('Удалено');
+}
+
+// =====================================================================
+// EDIT DISH MODAL
+// =====================================================================
+let editMode = 'edit'; // 'edit' | 'add'
+let editCatIdVal = '';
+let editDishIdxVal = -1;
+
+// temp sizes/extras while editing
+let tmpSizes = [];
+let tmpExtras = [];
+
+function openEditDish(catId, dishIdx) {
+  editMode = 'edit';
+  editCatIdVal = catId;
+  editDishIdxVal = dishIdx;
+  const cat = MENU.find(c => c.id === catId);
+  const dish = cat.dishes[dishIdx];
+
+  document.getElementById('editModalTitle').textContent = 'Редактировать блюдо';
+  document.getElementById('editName').value = dish.name;
+  document.getElementById('editDesc').value = dish.desc || '';
+  document.getElementById('editImg').value = dish.img || '';
+  document.getElementById('editCatSelect').value = catId;
+
+  tmpSizes = JSON.parse(JSON.stringify(dish.sizes));
+  tmpExtras = JSON.parse(JSON.stringify(dish.extras));
+
+  renderSizesEditor();
+  renderExtrasEditor();
+  previewImg();
+
+  document.getElementById('editOverlay').classList.add('edit-overlay--open');
+}
+
+function openAddDish() {
+  if (MENU.length === 0) { showToast('Сначала создайте категорию'); return; }
+  editMode = 'add';
+  editCatIdVal = MENU[0].id;
+  editDishIdxVal = -1;
+
+  document.getElementById('editModalTitle').textContent = 'Добавить блюдо';
+  document.getElementById('editName').value = '';
+  document.getElementById('editDesc').value = '';
+  document.getElementById('editImg').value = '';
+  document.getElementById('editCatSelect').value = MENU[0].id;
+  document.getElementById('imgPreview').style.display = 'none';
+  document.getElementById('imgPreviewPlaceholder').style.display = 'flex';
+
+  tmpSizes = [{ label: 'Стандарт', weight: '300 г', price: 300 }];
+  tmpExtras = [];
+
+  renderSizesEditor();
+  renderExtrasEditor();
+
+  document.getElementById('editOverlay').classList.add('edit-overlay--open');
+}
+
+function closeEditModal() {
+  document.getElementById('editOverlay').classList.remove('edit-overlay--open');
+}
+
+function saveDish() {
+  const name = document.getElementById('editName').value.trim();
+  if (!name) { showToast('Введите название блюда'); return; }
+  if (tmpSizes.length === 0) { showToast('Добавьте хотя бы один размер/вариант'); return; }
+
+  // collect sizes from DOM
+  const sizeRows = document.querySelectorAll('.size-row');
+  tmpSizes = [];
+  sizeRows.forEach(row => {
+    const label = row.querySelector('.size-label').value.trim();
+    const weight = row.querySelector('.size-weight').value.trim();
+    const price = parseInt(row.querySelector('.size-price').value);
+    if (label && !isNaN(price)) tmpSizes.push({ label, weight, price });
+  });
+
+  const extraRows = document.querySelectorAll('.extra-row');
+  tmpExtras = [];
+  extraRows.forEach(row => {
+    const n = row.querySelector('.extra-name').value.trim();
+    const p = parseInt(row.querySelector('.extra-price').value);
+    if (n && !isNaN(p)) tmpExtras.push({ name: n, price: p });
+  });
+
+  const dish = {
+    name,
+    desc: document.getElementById('editDesc').value.trim(),
+    img: document.getElementById('editImg').value.trim(),
+    sizes: tmpSizes,
+    extras: tmpExtras,
+  };
+
+  const newCatId = document.getElementById('editCatSelect').value;
+
+  if (editMode === 'edit') {
+    // if category changed, move dish
+    if (newCatId !== editCatIdVal) {
+      const oldCat = MENU.find(c => c.id === editCatIdVal);
+      oldCat.dishes.splice(editDishIdxVal, 1);
+      const newCat = MENU.find(c => c.id === newCatId);
+      newCat.dishes.push(dish);
+    } else {
+      const cat = MENU.find(c => c.id === editCatIdVal);
+      cat.dishes[editDishIdxVal] = dish;
+    }
+  } else {
+    const cat = MENU.find(c => c.id === newCatId);
+    cat.dishes.push(dish);
+  }
+
+  saveData();
+  renderDishesTable();
+  renderCategoryFilter();
+  closeEditModal();
+  showToast(editMode === 'edit' ? 'Блюдо сохранено' : 'Блюдо добавлено');
+}
+
+function deleteDish(catId, dishIdx) {
+  const cat = MENU.find(c => c.id === catId);
+  if (!confirm(`Удалить «${cat.dishes[dishIdx].name}»?`)) return;
+  cat.dishes.splice(dishIdx, 1);
+  saveData();
+  renderDishesTable();
+  showToast('Блюдо удалено');
+}
+
+// ---- SIZE ROWS ----
+function renderSizesEditor() {
+  const editor = document.getElementById('sizesEditor');
+  editor.innerHTML = tmpSizes.map((s, i) => `
+    <div class="sizes-editor__row size-row" data-idx="${i}">
+      <div class="field">
+        ${i === 0 ? '<label>Название варианта</label>' : ''}
+        <input class="size-label" type="text" value="${s.label}" placeholder="Стандарт" />
+      </div>
+      <div class="field">
+        ${i === 0 ? '<label>Вес / объём</label>' : ''}
+        <input class="size-weight" type="text" value="${s.weight}" placeholder="300 г" />
+      </div>
+      <div class="field">
+        ${i === 0 ? '<label>Цена ₽</label>' : ''}
+        <input class="size-price" type="number" value="${s.price}" placeholder="300" min="0" />
+      </div>
+      <div class="field" style="${i === 0 ? '' : ''}">
+        ${i === 0 ? '<label>&nbsp;</label>' : ''}
+        <button class="icon-btn icon-btn--danger" onclick="removeSizeRow(${i})" title="Удалить">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addSizeRow() {
+  collectSizeRows();
+  tmpSizes.push({ label: '', weight: '', price: 0 });
+  renderSizesEditor();
+}
+
+function removeSizeRow(idx) {
+  collectSizeRows();
+  tmpSizes.splice(idx, 1);
+  renderSizesEditor();
+}
+
+function collectSizeRows() {
+  const rows = document.querySelectorAll('.size-row');
+  tmpSizes = [];
+  rows.forEach(row => {
+    tmpSizes.push({
+      label: row.querySelector('.size-label').value,
+      weight: row.querySelector('.size-weight').value,
+      price: parseInt(row.querySelector('.size-price').value) || 0,
+    });
+  });
+}
+
+// ---- EXTRA ROWS ----
+function renderExtrasEditor() {
+  const editor = document.getElementById('extrasEditor');
+  if (tmpExtras.length === 0) {
+    editor.innerHTML = '<p style="font-size:12px;color:#888;margin-bottom:8px">Нет добавок</p>';
+    return;
+  }
+  editor.innerHTML = tmpExtras.map((e, i) => `
+    <div class="extras-editor__row extra-row" data-idx="${i}">
+      <div class="field">
+        ${i === 0 ? '<label>Название добавки</label>' : ''}
+        <input class="extra-name" type="text" value="${e.name}" placeholder="Сыр" />
+      </div>
+      <div class="field">
+        ${i === 0 ? '<label>Цена ₽</label>' : ''}
+        <input class="extra-price" type="number" value="${e.price}" placeholder="40" min="0" />
+      </div>
+      <div class="field">
+        ${i === 0 ? '<label>&nbsp;</label>' : ''}
+        <button class="icon-btn icon-btn--danger" onclick="removeExtraRow(${i})" title="Удалить">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addExtraRow() {
+  collectExtraRows();
+  tmpExtras.push({ name: '', price: 0 });
+  renderExtrasEditor();
+}
+
+function removeExtraRow(idx) {
+  collectExtraRows();
+  tmpExtras.splice(idx, 1);
+  renderExtrasEditor();
+}
+
+function collectExtraRows() {
+  const rows = document.querySelectorAll('.extra-row');
+  tmpExtras = [];
+  rows.forEach(row => {
+    tmpExtras.push({
+      name: row.querySelector('.extra-name').value,
+      price: parseInt(row.querySelector('.extra-price').value) || 0,
+    });
+  });
+}
+
+// ---- IMG PREVIEW ----
+function previewImg() {
+  const url = document.getElementById('editImg').value.trim();
+  const img = document.getElementById('imgPreview');
+  const placeholder = document.getElementById('imgPreviewPlaceholder');
+  if (url) {
+    img.src = url;
+    img.style.display = 'block';
+    placeholder.style.display = 'none';
+    img.onerror = () => { img.style.display = 'none'; placeholder.style.display = 'flex'; };
+  } else {
+    img.style.display = 'none';
+    placeholder.style.display = 'flex';
+  }
+}
+
+// ---- CLOSE ON BACKDROP ----
+document.getElementById('editOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('editOverlay')) closeEditModal();
+});
+
+// =====================================================================
+// TOAST
+// =====================================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('toast--show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('toast--show'), 2400);
+}
+</script>
+</body>
+</html>
