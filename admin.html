@@ -221,19 +221,22 @@
 
 <script>
 // =====================================================================
-// PASSWORD (SHA-256)
+// PASSWORD
 // =====================================================================
-const ADMIN_HASH = '5e0c4e352c01d9cd79262644a3f0e923fa38e4db4e2d063328e0d49affa61237';
-
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+function _h(s) {
+  let a = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    a ^= s.charCodeAt(i);
+    a = (Math.imul(a, 0x01000193) >>> 0);
+  }
+  return a.toString(16).padStart(8, '0');
 }
+// hash of 'bilitutadminkostya'
+const ADMIN_HASH = _h('bilitutadminkostya');
 
-async function doLogin() {
+function doLogin() {
   const val = document.getElementById('pwdInput').value;
-  const hash = await sha256(val);
-  if (hash === ADMIN_HASH) {
+  if (_h(val) === ADMIN_HASH) {
     sessionStorage.setItem('admin_auth', '1');
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('adminApp').style.display = 'flex';
