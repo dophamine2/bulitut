@@ -25,6 +25,17 @@
 <!-- ============ ADMIN APP ============ -->
 <div class="admin-wrap" id="adminApp" style="display:none">
 
+  <!-- MOBILE TOPBAR -->
+  <div class="mobile-topbar" id="mobileTopbar">
+    <button class="burger-btn" id="burgerBtn" onclick="toggleSidebar()" aria-label="Меню">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="mobile-topbar__title" id="mobileTitle">Блюда</div>
+  </div>
+
+  <!-- SIDEBAR OVERLAY -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar__logo">
@@ -33,22 +44,18 @@
     </div>
     <nav class="sidebar__nav">
       <div class="sidebar__item sidebar__item--active" data-section="dishes" onclick="showSection('dishes', this)">
-        <span class="ico">🍽</span> Блюда
+        Блюда
       </div>
       <div class="sidebar__item" data-section="categories" onclick="showSection('categories', this)">
-        <span class="ico">📂</span> Категории
+        Категории
       </div>
       <div class="sidebar__item" data-section="extras" onclick="showSection('extras', this)">
-        <span class="ico">➕</span> Добавки
+        Добавки
       </div>
     </nav>
     <div class="sidebar__bottom">
-      <a href="menu.html" target="_blank" class="btn btn--ghost btn--sm" style="width:100%;justify-content:center;margin-top:0">
-        ↗ Открыть меню
-      </a>
-      <button class="btn btn--ghost btn--sm" style="width:100%;justify-content:center;margin-top:8px" onclick="doLogout()">
-        Выйти
-      </button>
+      <a href="menu.html" target="_blank" class="btn btn--ghost btn--sm">Открыть меню</a>
+      <button class="btn btn--ghost btn--sm" onclick="doLogout()">Выйти</button>
     </div>
   </aside>
 
@@ -59,7 +66,7 @@
     <div class="section section--active" id="section-dishes">
       <div class="topbar">
         <div class="topbar__title">Блюда</div>
-        <button class="btn" onclick="openAddDish()">+ Добавить блюдо</button>
+        <button class="btn btn--sm" onclick="openAddDish()">+ Добавить</button>
       </div>
 
       <div class="filter-bar">
@@ -92,7 +99,7 @@
       </div>
 
       <div class="add-form">
-        <div class="add-form__title">Новая категория</div>
+        <div class="add-form__title">Добавить категорию</div>
         <div class="form-grid">
           <div class="field">
             <label>Название (отображаемое)</label>
@@ -109,8 +116,8 @@
       </div>
 
       <div class="section-hdr">
-        <span class="section-hdr__title">Все категории</span>
-        <span style="font-size:12px;color:#888">Перетащите для изменения порядка</span>
+        <span class="section-hdr__title">Список категорий</span>
+        <span style="font-size:11px;color:#aaa">Drag для сортировки</span>
       </div>
       <div class="categories-list" id="categoriesList"></div>
     </div>
@@ -118,10 +125,10 @@
     <!-- ===== EXTRAS SECTION ===== -->
     <div class="section" id="section-extras">
       <div class="topbar">
-        <div class="topbar__title">Добавки по умолчанию</div>
+        <div class="topbar__title">Добавки</div>
       </div>
-      <div class="add-form" style="margin-bottom:20px">
-        <div class="add-form__title">Добавить добавку</div>
+      <div class="add-form">
+        <div class="add-form__title">Новая добавка</div>
         <div class="form-grid">
           <div class="field">
             <label>Название</label>
@@ -165,54 +172,46 @@
     <input type="hidden" id="editCatId" />
     <input type="hidden" id="editDishIdx" />
 
-    <div class="form-grid form-grid--full" style="margin-bottom:14px">
-      <div class="field">
-        <label>Название блюда</label>
-        <input type="text" id="editName" placeholder="Название" />
+    <div class="field" style="margin-bottom:12px">
+      <label>Название</label>
+      <input type="text" id="editName" placeholder="Название блюда" />
+    </div>
+
+    <div class="field" style="margin-bottom:12px">
+      <label>Описание</label>
+      <textarea id="editDesc" placeholder="Состав, особенности…"></textarea>
+    </div>
+
+    <div class="field" style="margin-bottom:12px">
+      <label>Ссылка на фото</label>
+      <input type="url" id="editImg" placeholder="https://…" oninput="previewImg()" />
+      <div class="img-preview-wrap">
+        <div class="img-preview-placeholder" id="imgPreviewPlaceholder"></div>
+        <img class="img-preview" id="imgPreview" src="" alt="" style="display:none" />
+        <span style="font-size:11px;color:#aaa">Прямая ссылка на изображение</span>
       </div>
     </div>
 
-    <div class="form-grid form-grid--full" style="margin-bottom:14px">
-      <div class="field">
-        <label>Описание</label>
-        <textarea id="editDesc" placeholder="Состав / описание блюда"></textarea>
-      </div>
-    </div>
-
-    <div class="form-grid form-grid--full" style="margin-bottom:6px">
-      <div class="field">
-        <label>URL фото</label>
-        <input type="text" id="editImg" placeholder="https://…" oninput="previewImg()" />
-        <div class="img-preview-wrap">
-          <div class="img-preview-placeholder" id="imgPreviewPlaceholder">🖼</div>
-          <img class="img-preview" id="imgPreview" src="" alt="" style="display:none" />
-          <span style="font-size:12px;color:#888;max-width:300px">Вставьте ссылку на изображение. Можно использовать прямые URL из интернета.</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="field" style="margin-bottom:14px">
+    <div class="field" style="margin-bottom:4px">
       <label>Категория</label>
       <select id="editCatSelect"></select>
     </div>
 
-    <!-- SIZES -->
-    <div class="section-hdr" style="margin-top:16px">
-      <span class="section-hdr__title">Размеры / варианты</span>
+    <div class="section-hdr">
+      <span class="section-hdr__title">Варианты / размеры</span>
       <button class="btn btn--ghost btn--sm" onclick="addSizeRow()">+ Добавить</button>
     </div>
     <div class="sizes-editor" id="sizesEditor"></div>
 
-    <!-- EXTRAS -->
-    <div class="section-hdr" style="margin-top:16px">
+    <div class="section-hdr">
       <span class="section-hdr__title">Добавки</span>
       <button class="btn btn--ghost btn--sm" onclick="addExtraRow()">+ Добавить</button>
     </div>
     <div class="extras-editor" id="extrasEditor"></div>
 
-    <div style="display:flex;gap:10px;margin-top:24px;justify-content:flex-end">
-      <button class="btn btn--ghost" onclick="closeEditModal()">Отмена</button>
-      <button class="btn" onclick="saveDish()">Сохранить</button>
+    <div style="display:flex;gap:8px;margin-top:20px;justify-content:flex-end">
+      <button class="btn btn--ghost btn--sm" onclick="closeEditModal()">Отмена</button>
+      <button class="btn btn--sm" onclick="saveDish()">Сохранить</button>
     </div>
   </div>
 </div>
@@ -241,6 +240,29 @@ function doLogin() {
 function doLogout() {
   sessionStorage.removeItem('admin_auth');
   location.reload();
+}
+
+// =====================================================================
+// MOBILE SIDEBAR
+// =====================================================================
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const btn = document.getElementById('burgerBtn');
+  const isOpen = sidebar.classList.contains('sidebar--open');
+  if (isOpen) {
+    closeSidebar();
+  } else {
+    sidebar.classList.add('sidebar--open');
+    overlay.classList.add('sidebar-overlay--open');
+    btn.classList.add('open');
+  }
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('sidebar--open');
+  document.getElementById('sidebarOverlay').classList.remove('sidebar-overlay--open');
+  document.getElementById('burgerBtn').classList.remove('open');
 }
 
 document.getElementById('pwdInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
@@ -367,11 +389,15 @@ function initApp() {
 // =====================================================================
 // SECTION NAVIGATION
 // =====================================================================
+const SECTION_TITLES = { dishes: 'Блюда', categories: 'Категории', extras: 'Добавки' };
+
 function showSection(name, el) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('section--active'));
   document.querySelectorAll('.sidebar__item').forEach(i => i.classList.remove('sidebar__item--active'));
   document.getElementById('section-' + name).classList.add('section--active');
   el.classList.add('sidebar__item--active');
+  document.getElementById('mobileTitle').textContent = SECTION_TITLES[name] || name;
+  closeSidebar();
 }
 
 // =====================================================================
